@@ -86,15 +86,10 @@ class ConstNet(nn.Module):
 if __name__ == "__main__":
     print(__file__)
 
-    net = ConstNet(ks=5, inch=3, res_ch=3)
-    
-    criterion1 = nn.L1Loss()
-    criterion2 = nn.BCEWithLogitsLoss()
+    net = ConstNet(ks=5, inch=3, res_ch=3, num_cls=33, dev='cpu')
 
-    opt = torch.optim.Adam(params=net.parameters(), lr=1e-3)
-
-    x = torch.randn(size=(1, 3, 480, 800))
-    out = net(x)
+    x = torch.randn(size=(100, 3, 480, 800))
+    out, _, _, _ = net(x)
     print(out.shape)
 
         
