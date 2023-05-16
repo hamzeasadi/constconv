@@ -34,8 +34,13 @@ def eval_step(model:nn.Module, loader:DataLoader, dev):
     model.eval()
     gt_lbl = []
     pred_lbl = []
-    for X, y in loader:
-        out, out00, out01, out02 = model(X.to(dev))
+    with torch.no_grad():
+        for X, y in loader:
+            out, out00, out01, out02 = model(X.to(dev))
+            gt_lbl.append(y.cpu().detach().numpy())
+            # pred_lbl.append(out.)
+
+
 
 
     return epoch_loss
