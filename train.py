@@ -17,12 +17,12 @@ if __name__ == "__main__":
     lr = 1e-3
     ks = 5
 
-    model = m.ConstNet(ks=ks, inch=3, res_ch=10, num_cls=33)
+    model = m.ConstNet(ks=ks, inch=3, res_ch=10, num_cls=33, dev=dev)
     opt = optim.SGD(params=model.parameters(), lr=lr)
     criterion = nn.CrossEntropyLoss()
 
-    data_loader = dst.create_laoder(data_path=paths.server_data_path, train_precent=0.8, batch_size=128, nw=22)
-
+    data_loader, test_loader = dst.create_laoder(data_path=paths.server_data_path, train_precent=0.8, batch_size=128, nw=22)
+    model.to(dev)
     model.train()
     for epoch in range(epochs):
         train_loss = engine.train_step(model=model, opt=opt, criterion=criterion, loader=data_loader, dev=dev)

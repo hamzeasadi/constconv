@@ -26,9 +26,10 @@ def create_dummy(ks:int):
 
 class ConstNet(nn.Module):
 
-    def __init__(self, ks, inch, res_ch, num_cls):
+    def __init__(self, ks, inch, res_ch, num_cls, dev):
         super().__init__()
         self.ks = ks
+        self.dev = dev
         self.constlayer = nn.Conv2d(in_channels=inch, out_channels=res_ch, kernel_size=ks, stride=1, bias=False)
         self.blk1 = nn.Sequential(
             nn.Conv2d(in_channels=res_ch, out_channels=96, kernel_size=7, stride=2, padding=2), 
@@ -57,13 +58,13 @@ class ConstNet(nn.Module):
     def constrain_apply(self):
         (X00, X10), (X01, X11), (X02, X12) = create_dummy(ks=self.ks)
         # print(X00.shape)
-        out00 = self.constlayer(X00)
-        out01 = self.constlayer(X01)
-        out02 = self.constlayer(X02)
+        out00 = self.constlayer(X00.to(self.dev))
+        out01 = self.constlayer(X01.to(self.dev))
+        out02 = self.constlayer(X02.to(self.dev))
 
-        out10 = self.constlayer(X10)
-        out11 = self.constlayer(X11)
-        out12 = self.constlayer(X12)
+        out10 = self.constlayer(X10.to(self.dev))
+        out11 = self.constlayer(X11.to(self.dev))
+        out12 = self.constlayer(X12.to(self.dev))
 
         return (out00, out00+out10), (out01, out01+out11), (out02, out02+out12)
     
