@@ -24,14 +24,14 @@ torch.manual_seed(42)
 
 if __name__ == '__main__':
     print(__file__)
-    model = m.ConstNet(ks=3, inch=3, res_ch=10, num_cls=33, dev=dev)
+    model = m.ConstNet(ks=5, inch=3, res_ch=10, num_cls=33, dev=dev)
     data_loader, test_loader = dst.create_laoder(data_path=paths.server_data_path, train_precent=0.8, batch_size=128, nw=22)
     ckpoint = torch.load(os.path.join(paths.model, f'ckpoint_{args.ckpoint_num}.pt'), map_location=dev)
     model.load_state_dict(ckpoint)
     model.to(dev)
     acc, pic, residual = engine.eval_step(model=model, loader=test_loader, dev=dev)
     print(f'accuracu = {acc}')
-    
+
     res = residual.cpu().detach().squeeze().numpy()
     pix = pic.cpu().squeeze().permute(1,2,0).numpy()
     fig, axs = plt.subplots(nrows=2, ncols=3, figsize=(24, 16))
