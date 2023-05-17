@@ -38,7 +38,7 @@ def eval_step(model:nn.Module, loader:DataLoader, dev):
         for X, y in loader:
             out, out00, out01, out02 = model(X.to(dev))
             prediction = torch.argmax(out, dim=1)
-            cmp = prediction==y
+            cmp = prediction==y.to(dev)
             acc += torch.sum(cmp)/len(cmp)
 
         resuduals = constlayer(X[0:1].to(dev))
