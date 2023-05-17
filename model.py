@@ -45,15 +45,19 @@ class ConstNet(nn.Module):
 
         self.blk3 = nn.Sequential(
             nn.Conv2d(in_channels=64, out_channels=128, kernel_size=1, stride=1, padding='same'),
-            nn.BatchNorm2d(128), nn.Tanh(), nn.MaxPool2d(kernel_size=3, stride=2), nn.Flatten()
+            nn.BatchNorm2d(128), nn.Tanh(), nn.MaxPool2d(kernel_size=3, stride=2), 
+            nn.Conv2d(in_channels=128, out_channels=128, kernel_size=3, stride=1, padding='same'),
+            nn.BatchNorm2d(128), nn.Tanh(), nn.MaxPool2d(kernel_size=3, stride=2),
+            nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, stride=1, padding='same'),
+            nn.BatchNorm2d(256), nn.Tanh(), nn.AvgPool2d(kernel_size=5, stride=2), nn.Flatten()
         )
 
         self.blk4 = nn.Sequential(
-            nn.Linear(in_features=38272, out_features=1024), nn.Tanh(), nn.Dropout(0.5),
-            nn.Linear(in_features=1024, out_features=1024), nn.Tanh(), nn.Dropout(0.5)
+            nn.Linear(in_features=1024, out_features=200), nn.Tanh(), nn.Dropout(0.4),
+            nn.Linear(in_features=200, out_features=num_cls)
         )
 
-        self.fc = nn.Linear(in_features=1024, out_features=num_cls)
+        # self.fc = nn.Linear(in_features=1024, out_features=num_cls)
 
     def constrain_apply(self):
         (X00, X10), (X01, X11), (X02, X12) = create_dummy(ks=self.ks)
@@ -75,9 +79,10 @@ class ConstNet(nn.Module):
         x = self.blk1(x)
         x = self.blk2(x)
         x = self.blk3(x)
-        x = self.blk4(x)
-        out = self.fc(x)
+        out = self.blk4(x)
+        # out = self.fc(x)
         return out, out00, out01, out02
+
     
 
 
@@ -87,10 +92,10 @@ if __name__ == "__main__":
     print(__file__)
 
     net = ConstNet(ks=5, inch=3, res_ch=3, num_cls=33, dev='cpu')
-
-    x = torch.randn(size=(100, 3, 480, 800))
-    out, _, _, _ = net(x)
-    print(out.shape)
+    print(net)
+    x = torch.randn(size=(1, 3, 480, 800))
+    # out = net(x)
+    # print(out.shape)
 
         
 
