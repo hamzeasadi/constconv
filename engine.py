@@ -32,15 +32,15 @@ def train_step(model:nn.Module, opt:Optimizer, criterion:nn.Module, loader:DataL
 def eval_step(model:nn.Module, loader:DataLoader, dev):
     epoch_loss = 0
     model.eval()
-    gt_lbl = []
-    pred_lbl = []
+    constlayer = model.constlayer
+    acc = 0
     with torch.no_grad():
         for X, y in loader:
             out, out00, out01, out02 = model(X.to(dev))
-            gt_lbl.append(y.cpu().detach().numpy())
-            # pred_lbl.append(out.)
+            prediction = torch.argmax(out, dim=1)
+            cmp = prediction==y
+            acc += torch.sum(cmp)/len(cmp)
 
-
-
-
-    return epoch_loss
+        resuduals = constlayer(X[0:1].to(dev))
+    
+    return acc, X[0:1], resuduals
