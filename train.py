@@ -49,7 +49,7 @@ if __name__ == "__main__":
                     if i==0 and j==0:
                         axs[i,j].imshow(pix)
                     else:
-                        axs[i,j].imshow(res[i*2+j], cmap='gray')
+                        axs[i,j].imshow(res[i*2+j-1], cmap='gray')
             
             plt.subplots_adjust(wspace=0, hspace=0)
             save_path = os.path.join(paths.result, f'ckpoint_{epoch}')
