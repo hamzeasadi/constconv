@@ -29,7 +29,8 @@ if __name__ == "__main__":
 
     data_loader, test_loader = dst.create_laoder(data_path=paths.server_data_path, train_precent=0.87, batch_size=128, nw=22)
     model.to(dev)
-    
+    num_batch = len(data_loader)
+    test_batch = len(test_loader)
     for epoch in range(epochs):
         model.train()
         train_loss = engine.train_step(model=model, opt=opt, criterion=criterion, loader=data_loader, dev=dev)
@@ -37,7 +38,7 @@ if __name__ == "__main__":
         print(train_loss)
 
         acc, pic, residual = engine.eval_step(model=model, loader=test_loader, dev=dev)
-        print(f'accuracy = {acc}')
+        print(f'accuracy = {acc/test_batch}, test_batch={test_batch}')
 
         res = residual.cpu().detach().squeeze().numpy()
         pix = pic.cpu().squeeze().permute(1,2,0).numpy()
