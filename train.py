@@ -35,7 +35,7 @@ if __name__ == "__main__":
         model.train()
         train_loss = engine.train_step(model=model, opt=opt, criterion=criterion, loader=data_loader, dev=dev)
         torch.save(model.state_dict(), os.path.join(paths.model, f'ckpoint_{epoch}.pt'))
-        print(train_loss)
+        print(train_loss/num_batch)
 
         acc, pic, residual = engine.eval_step(model=model, loader=test_loader, dev=dev)
         print(f'accuracy = {acc/test_batch}, test_batch={test_batch}')
@@ -44,7 +44,7 @@ if __name__ == "__main__":
         pix = pic.cpu().squeeze().permute(1,2,0).numpy()
         fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(24, 16))
         for i in range(2):
-            for j in range(3):
+            for j in range(2):
                 if i==0 and j==0:
                     axs[i,j].imshow(pix)
                 else:
