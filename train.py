@@ -20,10 +20,12 @@ torch.manual_seed(42)
 
 if __name__ == "__main__":
     epochs = 1000000
-    lr = 1e-3
+    lr = 7e-5
     ks = 5
 
     model = m.ConstNet(ks=ks, inch=3, res_ch=3, num_cls=33, dev=dev)
+    model_state = torch.load(os.path.join(paths.data, f'ckpoint_{1900}.pt'))
+    model.load_state_dict(model_state)
     opt = optim.SGD(params=model.parameters(), lr=lr)
     criterion = nn.CrossEntropyLoss()
 
