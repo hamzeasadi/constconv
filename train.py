@@ -20,7 +20,7 @@ torch.manual_seed(42)
 
 if __name__ == "__main__":
     epochs = 1000000
-    lr = 7e-5
+    lr = 3e-4
     ks = 5
 
     model = m.ConstNet(ks=ks, inch=3, res_ch=3, num_cls=33, dev=dev)
