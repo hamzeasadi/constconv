@@ -18,7 +18,7 @@ def train_step(model:nn.Module, opt:Optimizer, criterion:nn.Module, loader:DataL
         out, out00, out01, out02 = model(X.to(dev))
         y = torch.zeros_like(out00[0])
         loss1 = crt1(out00[1], y) + crt1(out01[1], y) + crt1(out02[1], y)
-        loss2 = crt2(out00[0]/100000, y) + crt2(out01[0]/1000000, y) + crt2(out02[0]/1000000, y)
+        loss2 = crt2(out00[0]/10, y) + crt2(out01[0]/10, y) + crt2(out02[0]/10, y)
         loss3 = criterion(out, Y.to(dev))
         loss = loss1 + loss2 + loss3
         opt.zero_grad()

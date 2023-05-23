@@ -70,7 +70,7 @@ class ConstNet(nn.Module):
         out11 = self.constlayer(X11.to(self.dev))
         out12 = self.constlayer(X12.to(self.dev))
 
-        return (out00, out00/100000+out10), (out01, out01/100000+out11), (out02, out02/100000+out12)
+        return (out00, out00+out10), (out01, out01+out11), (out02, out02+out12)
     
 
     def forward(self, x):
