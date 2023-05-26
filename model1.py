@@ -67,31 +67,27 @@ class ConstNet(nn.Module):
             nn.Linear(in_features=200, out_features=num_cls)
         )
 
-        # self.base = nn.Sequential()
+        # self.fc = nn.Linear(in_features=1024, out_features=num_cls)
 
     def constrain_apply(self):
     
-        (X00, X10), (X01, X11), (X02, X12) = create_dummy(ks=self.ks, inch=self.inch)
+        x0, x1 = create_dummy(ks=self.ks, inch=self.inch)
         # print(X00.shape)
-        out00 = self.constlayer(X00.to(self.dev))
-        out01 = self.constlayer(X01.to(self.dev))
-        out02 = self.constlayer(X02.to(self.dev))
-
-        out10 = self.constlayer(X10.to(self.dev))
-        out11 = self.constlayer(X11.to(self.dev))
-        out12 = self.constlayer(X12.to(self.dev))
-
-        return (out00, out00+out10), (out01, out01+out11), (out02, out02+out12)
+        out0 = self.constlayer(x0.to(self.dev))
+        out1 = self.constlayer(x1.to(self.dev))
+  
+        
+        return out0, out1
     
     def forward(self, x):
-        out00, out01, out02 = self.constrain_apply()
+        out0, out1 = self.constrain_apply()
         x = self.constlayer(x)
         x = self.blk1(x)
         x = self.blk2(x)
         x = self.blk3(x)
         out = self.blk4(x)
         # out = self.fc(x)
-        return out, out00, out01, out02
+        return out, out0, out1
 
     
 
@@ -101,15 +97,28 @@ class ConstNet(nn.Module):
 if __name__ == "__main__":
     print(__file__)
 
-    net = ConstNet(ks=3, inch=3, res_ch=3, num_cls=33, dev='cpu')
+    net = ConstNet(ks=5, inch=1, res_ch=3, num_cls=33, dev='cpu')
     const_layer = net.constlayer
-    constparam = ['constlayer.weight', 'constlayer.bias']
-    params = list(filter(lambda kv:kv[0] in constparam, net.named_parameters()))
-    base_params = list(filter(lambda kv:kv[0] not in constparam, net.named_parameters()))
+    print(const_layer.weight)
 
-    print(params)
-    # print(base_params)
-    
+    x0, x1 = create_dummy(ks=5, inch=1)
+    criterion0 = nn.L1Loss()
+    criterion1 = nn.BCEWithLogitsLoss()
+    opt = torch.optim.Adam(params=const_layer.parameters(), lr=1e-1)
+    s=100
+    for epoch in range(30000):
+        out0 = const_layer(x0)
+        out1 = const_layer(x1)
+        y = torch.zeros_like(out0, requires_grad=False)
+
+        loss = criterion0(out0+out1, y) + criterion1(out0/20, y)
+        opt.zero_grad()
+        loss.backward()
+        opt.step()
+        if epoch%1000 == 0:
+            print(f"epoch={epoch} loss={loss.item()}")
+
+    print(const_layer.weight)
 
         
 

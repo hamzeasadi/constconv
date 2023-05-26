@@ -24,9 +24,16 @@ if __name__ == "__main__":
     ks = 5
 
     model = m.ConstNet(ks=ks, inch=3, res_ch=3, num_cls=33, dev=dev)
-    model_state = torch.load(os.path.join(paths.data, f'ckpoint_{1900}.pt'))
-    model.load_state_dict(model_state)
-    opt = optim.SGD(params=model.parameters(), lr=lr)
+    # model_state = torch.load(os.path.join(paths.data, f'ckpoint_{1900}.pt'))
+    # model.load_state_dict(model_state)
+    constparam = ['constlayer.weight', 'constlayer.bias']
+    params = list(filter(lambda kv:kv[0] in constparam, model.named_parameters()))
+    base_params = list(filter(lambda kv:kv[0] not in constparam, model.named_parameters()))
+    opt = optim.Adam([
+        {'params': base_params}, 
+        {'params': params, 'lr':5e-2}
+    ], lr=lr)
+
     criterion = nn.CrossEntropyLoss()
 
     data_loader, test_loader = dst.create_laoder(data_path=paths.server_data_path, train_precent=0.87, batch_size=128, nw=22)
