@@ -63,8 +63,8 @@ class ConstNet(nn.Module):
         )
 
         self.blk4 = nn.Sequential(
-            nn.Linear(in_features=1024, out_features=200), nn.Tanh(), nn.Dropout(0.4),
-            nn.Linear(in_features=200, out_features=num_cls)
+            nn.Linear(in_features=1024, out_features=num_cls)#, nn.Tanh(), nn.Dropout(0.4),
+            # nn.Linear(in_features=200, out_features=num_cls)
         )
 
         # self.base = nn.Sequential()
@@ -107,9 +107,7 @@ if __name__ == "__main__":
     params = list(filter(lambda kv:kv[0] in constparam, net.named_parameters()))
     base_params = list(filter(lambda kv:kv[0] not in constparam, net.named_parameters()))
 
-    print(params)
-    # print(base_params)
-    
+    print(list(net.parameters()))
 
         
 

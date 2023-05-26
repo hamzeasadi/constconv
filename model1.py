@@ -104,19 +104,21 @@ if __name__ == "__main__":
     x0, x1 = create_dummy(ks=5, inch=1)
     criterion0 = nn.L1Loss()
     criterion1 = nn.BCEWithLogitsLoss()
-    opt = torch.optim.Adam(params=const_layer.parameters(), lr=1e-1)
+    opt = torch.optim.Adam(params=const_layer.parameters(), lr=1e+3)
+    sch = torch.optim.lr_scheduler.LinearLR(optimizer=opt, start_factor=1, end_factor=0.0001, total_iters=1000)
     s=100
-    for epoch in range(30000):
+    for epoch in range(10000):
         out0 = const_layer(x0)
         out1 = const_layer(x1)
         y = torch.zeros_like(out0, requires_grad=False)
 
-        loss = criterion0(out0+out1, y) + criterion1(out0/20, y)
+        loss = criterion0(out0+out1, y) + criterion1(out0/100, y)
         opt.zero_grad()
         loss.backward()
         opt.step()
-        if epoch%1000 == 0:
-            print(f"epoch={epoch} loss={loss.item()}")
+        sch.step()
+        if epoch%100 == 0:
+            print(f"epoch={epoch} loss={loss.item()}, lr={sch.get_last_lr()}")
 
     print(const_layer.weight)
 
