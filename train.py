@@ -31,7 +31,7 @@ if __name__ == "__main__":
     base_params = list(filter(lambda kv:kv[0] not in constparam, model.named_parameters()))
     opt = optim.Adam([
         {'params': [temp[1] for temp in base_params]}, 
-        {'params': [temp[1] for temp in params], 'lr':1e+3}
+        {'params': [temp[1] for temp in params], 'lr':1e+1}
     ], lr=lr)
     sch = torch.optim.lr_scheduler.LinearLR(optimizer=opt, start_factor=1, end_factor=0.0001, total_iters=1000)
     criterion = nn.CrossEntropyLoss()
