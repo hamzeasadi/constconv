@@ -30,8 +30,8 @@ if __name__ == "__main__":
     params = list(filter(lambda kv:kv[0] in constparam, model.named_parameters()))
     base_params = list(filter(lambda kv:kv[0] not in constparam, model.named_parameters()))
     opt = optim.Adam([
-        {'params': base_params}, 
-        {'params': params, 'lr':5e-2}
+        {'params': [temp[1] for temp in base_params]}, 
+        {'params': [temp[1] for temp in params], 'lr':5e-2}
     ], lr=lr)
 
     criterion = nn.CrossEntropyLoss()
