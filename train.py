@@ -45,7 +45,7 @@ if __name__ == "__main__":
         train_loss = engine.train_step(model=model, opt=opt, criterion=criterion, loader=data_loader, dev=dev)
         #sch.step()
         torch.save(model.state_dict(), os.path.join(paths.model, f'ckpoint_{epoch}.pt'))
-        print(f"epoch={epoch} loss={train_loss/num_batch}, lr={sch.get_last_lr()}")
+        print(f"epoch={epoch} loss={train_loss/num_batch}")
 
         if epoch%5 == 0:
             acc, pic, residual = engine.eval_step(model=model, loader=test_loader, dev=dev)
