@@ -20,18 +20,18 @@ torch.manual_seed(42)
 
 if __name__ == "__main__":
     epochs = 1000000
-    lr = 2e-3
+    lr = 3e-4
     ks = 3
 
     model = m.ConstNet(ks=ks, inch=3, res_ch=3, num_cls=33, dev=dev)
-    # model_state = torch.load(os.path.join(paths.data, f'ckpoint_{1900}.pt'))
+    model_state = torch.load(os.path.join(paths.data, f'ckpoint_{170}.pt'))
     # model.load_state_dict(model_state)
     constparam = ['constlayer.weight', 'constlayer.bias']
     params = list(filter(lambda kv:kv[0] in constparam, model.named_parameters()))
     base_params = list(filter(lambda kv:kv[0] not in constparam, model.named_parameters()))
     opt = optim.Adam([
         {'params': [temp[1] for temp in base_params]}, 
-        {'params': [temp[1] for temp in params], 'lr':1}
+        {'params': [temp[1] for temp in params], 'lr':lr}
     ], lr=lr)
     #sch = torch.optim.lr_scheduler.LinearLR(optimizer=opt, start_factor=1, end_factor=0.0001, total_iters=10)
     criterion = nn.CrossEntropyLoss()
