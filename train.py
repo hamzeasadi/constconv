@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     model = m.ConstNet(ks=ks, inch=3, res_ch=3, num_cls=33, dev=dev)
     model_state = torch.load(os.path.join(paths.data, f'ckpoint_{170}.pt'))
-    # model.load_state_dict(model_state)
+    model.load_state_dict(model_state)
     constparam = ['constlayer.weight', 'constlayer.bias']
     params = list(filter(lambda kv:kv[0] in constparam, model.named_parameters()))
     base_params = list(filter(lambda kv:kv[0] not in constparam, model.named_parameters()))
