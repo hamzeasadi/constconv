@@ -20,7 +20,7 @@ torch.manual_seed(42)
 
 if __name__ == "__main__":
     epochs = 1000000
-    lr = 1.0
+    lr = 2e-3
     ks = 3
 
     model = m.ConstNet(ks=ks, inch=3, res_ch=3, num_cls=33, dev=dev)
@@ -31,9 +31,9 @@ if __name__ == "__main__":
     base_params = list(filter(lambda kv:kv[0] not in constparam, model.named_parameters()))
     opt = optim.Adam([
         {'params': [temp[1] for temp in base_params]}, 
-        {'params': [temp[1] for temp in params], 'lr':1e+0}
+        {'params': [temp[1] for temp in params], 'lr':1}
     ], lr=lr)
-    sch = torch.optim.lr_scheduler.LinearLR(optimizer=opt, start_factor=1, end_factor=0.0001, total_iters=10)
+    #sch = torch.optim.lr_scheduler.LinearLR(optimizer=opt, start_factor=1, end_factor=0.0001, total_iters=10)
     criterion = nn.CrossEntropyLoss()
 
     data_loader, test_loader = dst.create_laoder(data_path=paths.server_data_path, train_precent=0.87, batch_size=128, nw=22)
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     for epoch in range(epochs):
         model.train()
         train_loss = engine.train_step(model=model, opt=opt, criterion=criterion, loader=data_loader, dev=dev)
-        sch.step()
+        #sch.step()
         torch.save(model.state_dict(), os.path.join(paths.model, f'ckpoint_{epoch}.pt'))
         print(f"epoch={epoch} loss={train_loss/num_batch}, lr={sch.get_last_lr()}")
 
